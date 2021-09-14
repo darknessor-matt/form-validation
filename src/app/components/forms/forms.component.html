@@ -59,13 +59,13 @@
     </div>
     <div class="accordion-item">
         <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="true"
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
                 aria-controls="panelsStayOpen-collapseTwo">
                 Form 2
             </button>
         </h2>
-        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show"
+        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse"
             aria-labelledby="panelsStayOpen-headingTwo">
             <div class="accordion-body">
                 <form [formGroup]="multipleChoiceQuestionForm" (ngSubmit)="submitMultipleChoiceQuestionForm()">
@@ -151,7 +151,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="button" (click)="addAnswer()" class="btn btn-primary">
+                    <button type="button" (click)="addAnswer()" class="btn btn-secondary">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-plus" viewBox="0 0 16 16">
                             <path
@@ -167,22 +167,43 @@
     </div>
     <div class="accordion-item">
         <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
+            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="true"
                 aria-controls="panelsStayOpen-collapseThree">
-                Accordion Item #3
+                Form 3
             </button>
         </h2>
-        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse"
+        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show"
             aria-labelledby="panelsStayOpen-headingThree">
             <div class="accordion-body">
-                <div class="form-floating">
-                    <!-- <label class="form-label">Name</label> -->
-                    <input type="text" class="form-control" [class.is-invalid]="freeTextForm.controls['name'].invalid"
-                        [class.is-valid]="!freeTextForm.controls['name'].invalid" placeholder="Enter name" id="name"
-                        required>
-                    <label for="name">Name</label>
+                <div *ngFor="let cda of contactDetailsArray; let i = index" class="card mb-1">
+                    <form [formGroup]="cda.form">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    {{cda.label}}
+                                </div>
+                                <div>
+                                    <input class="form-check-input" formControlName="checked" (change)="checkboxChange(i)" type="checkbox"
+                                        value="" id="flexCheckDefault">
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="cda.form.value.checked">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <div class=" form-floating">
+                                        <input type="text" class="form-control" [class.is-invalid]="cda.form.invalid"
+                                            [class.is-valid]="cda.form.valid" formControlName="value"
+                                            placeholder="Enter title" id="i" required>
+                                        <label for="i">Enter value</label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
                 </div>
+                <button type="submit" (click) = "submitContactDetailsArray()" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </div>

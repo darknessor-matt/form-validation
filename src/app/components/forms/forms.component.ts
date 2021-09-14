@@ -12,6 +12,8 @@ export class FormsComponent implements OnInit {
   freeTextForm: FormGroup
   multipleChoiceQuestionForm: FormGroup
 
+  contactDetailsArray: Array<any>
+
   constructor(private toastr: ToastrCreatorService, private fb: FormBuilder) {
     this.initForms();
   }
@@ -46,7 +48,16 @@ export class FormsComponent implements OnInit {
         ]
       }],
       answers: this.fb.array([])
-    })
+    });
+
+    this.contactDetailsArray = [
+      { label: "Name", form: this.getForm() },
+      { label: "Gender", form: this.getForm() },
+      { label: "Nationality", form: this.getForm() },
+      { label: "Phone number", form: this.getForm() },
+      { label: "E-mail", form: this.getForm() }
+    ]
+
   }
 
   validateFreeTextForm(fieldName): boolean {
@@ -59,6 +70,33 @@ export class FormsComponent implements OnInit {
       (this.multipleChoiceQuestionForm.controls[fieldName].dirty || this.multipleChoiceQuestionForm.controls[fieldName].touched);
   }
 
+  checkboxChange(index) {
+    console.log()
+    if (!this.contactDetailsArray[index].form.value.checked) {
+      this.contactDetailsArray[index].form.controls.value.disable();
+    } else {
+      this.contactDetailsArray[index].form.controls.value.enable();
+    }
+  }
+
+  getForm() {
+    return new FormGroup({
+      value: new FormControl({ disabled: true, value: '' }, [Validators.required, Validators.minLength(5)]),
+      checked: new FormControl(false),
+    });
+  }
+
+  addAnswer() {
+    const answerForm = this.fb.group({
+      value: ["", Validators.required]
+    })
+    this.answers.push(answerForm)
+  }
+
+  deleteAnswer(index: number) {
+    this.answers.removeAt(index);
+  }
+
   submitFreeTextForm(): void {
     if (this.freeTextForm.valid) {
       this.toastr.createSuccess("Question Submitted", "Success!")
@@ -68,18 +106,30 @@ export class FormsComponent implements OnInit {
   }
 
   submitMultipleChoiceQuestionForm(): void {
-    console.log(this.multipleChoiceQuestionForm.value)
+    if (this.multipleChoiceQuestionForm.valid) {
+      this.toastr.createSuccess("Question Submitted", "Success!")
+    } else {
+      this.toastr.createError("Invalid input arguments", "Error!")
+    }
+    // console.log(this.multipleChoiceQuestionForm.value)
   }
 
-  addAnswer() {
-    const answerForm = this.fb.group({
-      value: ['', Validators.required]
-    })
-    this.answers.push(answerForm)
-  }
-
-  deleteAnswer(index: number) {
-    this.answers.removeAt(index);
+  submitContactDetailsArray(): void {
+    var valid = true;
+    var cnt = 0;
+    this.contactDetailsArray.forEach(element => {
+      if (element.form.value.checked)
+        cnt++
+      if (element.form.invalid)
+        valid = false
+    });
+    if (valid && cnt != 0) {
+      this.toastr.createSuccess("Details Submitted", "Success!")
+      return
+    }
+    else
+      this.toastr.createError("Invalid input arguments", "Error!")
+    console.log(this.contactDetailsArray)
   }
 
 }
